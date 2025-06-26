@@ -1,0 +1,9 @@
+[submodule "docker"]
+	path = docker
+	url = https://github.com/Protypangel-DAS/docker.git
+[submodule "services-custom/storybook"]
+	path = services-custom/storybook
+	url = https://github.com/Protypangel-DAS/services-storybook.git
+[submodule "test"]
+	path = test
+	url = https://github.com/Protypangel-DAS/test.git
