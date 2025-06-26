@@ -15,3 +15,10 @@ git clone https://https://github.com/protypangel/das.git
 # get each sub repo of das
 git submodule update --init --recursive
 ```
+
+# Push
+```sh
+git add -A
+git commit -m "message"
+git push --recurse-submodules=on-demand
+```
