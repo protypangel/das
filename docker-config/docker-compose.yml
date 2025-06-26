@@ -1,0 +1,67 @@
+version: "3.8"
+
+x-common-build-args: &common_build_args
+  POSTGRES_USER: guacamole_user
+  POSTGRES_PASSWORD: ChooseYourOwnPasswordHere1234
+  POSTGRES_DB: guacamole_db
+
+services:
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    restart: always
+    networks:
+      - guacnet
+
+  postgres:
+    container_name: postgres
+    build:
+      dockerfile: Dockerfile.postgres
+      context: .
+      args:
+        <<: *common_build_args
+        PSQL_USERNAME: abc
+        PSQL_PASSWORD: abc
+    #    volumes:
+    #      - db-data:/var/lib/postgresql/data/guacamole
+    ports:
+      - "5432:5432" # Publication du port PostgreSQL pour y accéder depuis l'hôte
+    networks:
+      - guacnet
+    restart: always
+
+  guacamole:
+    container_name: guacamole
+    build:
+      dockerfile: Dockerfile.guacamole
+      context: .
+      args:
+        <<: *common_build_args
+    restart: always
+    ports:
+      - "8080:8080" # Accès via navigateur : http://<hôte>:8080/guacamole
+    depends_on:
+      - guacd
+      - postgres
+    networks:
+      - guacnet
+
+  desktop:
+    image: dorowu/ubuntu-desktop-lxde-vnc
+    container_name: desktop
+    restart: always
+    ports:
+      - "5901:5901" # Port VNC (par défaut, le mot de passe VNC est "vncpassword")
+      - "6080:6080"
+      - "5900:5900"
+    networks:
+      - guacnet
+    environment:
+      - VNC_PORT=5901 # Spécifie explicitement le port VNC
+
+volumes:
+  db-data:
+
+networks:
+  guacnet:
+    driver: bridge
